@@ -1,0 +1,111 @@
+{% extends "/ServiceProfessional/base.html" %}
+{% block content %}
+    
+    <main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+        <div class="pt-4">
+            <div class="container">
+                <button class="btn btn-outline-white btn-lg d-flex align-items-center gap-2 shadow-none" onclick="history.back()">
+                    <span>&larr;</span> Back
+                </button>
+            </div>
+            <div class="card shadow-lg border-0 p-4 mt-2 mb-4">
+                <div class="row">
+                    <div class="col-md-8 d-flex align-items-center mb-3 text-nowrap">
+                        <div class="rounded-circle border border-0 bg-light mb-5 pb-5 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <img src="{{booking.service_plan.planimg}}" style="width: 100px; height: 100px;">
+                        </div>
+                        <div class="ms-3" style="height:200px">
+                            <h2 class="mb-0 display-5">{{booking.service_plan.name}}</h2>
+                            <div class="mt-2">
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    Status: 
+                                    <span 
+                                        class="{% if booking.status == 'Active' %}text-success{% elif booking.status == 'Cancelled' %}text-danger{% elif booking.status in ['Requested', 'Done'] %}text-warning{% elif booking.status == 'Closed' %}text-danger{% else %}text-muted{% endif %}">
+                                        {{booking.status}}
+                                    </span>
+                                </span>
+                                <span class="fs-5 border rounded px-2 ms-2 bg-light text-nowrap text-secondary small" >
+                                    <i class="bi bi-person"></i> 
+                                    {{booking.customer.name}}
+                                </span>
+                                
+                            </div>
+                            <div class="mt-2">
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-telephone"></i>
+                                    {{booking.customer.phone}}
+                                </span>
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-currency-rupee text-warning"></i>
+                                    {{booking.service_plan.price}}
+                                </span>
+                            </div>
+                            <div class="mt-2">
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-calendar"></i>
+                                    {{booking.date}}
+                                </span>
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-clock"></i>
+                                    {{booking.time}}
+                                </span>
+                                
+                            </div>
+                            <div class="mt-2">
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-geo-alt"></i>
+                                    {{booking.address}}
+                                </span>
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex flex-column align-items-center pb-3">
+                        {% if booking.status == "Requested" %}
+                            <div class="d-flex justify-content-center mb-2">
+                                <a href="/book?intent=Accept&bid={{booking.id}}">
+                                    <button class="btn btn-outline-success me-3">
+                                        <i class="bi bi-check"></i><span class="me-1"> Accept</span>
+                                    </button>
+                                </a>
+                                <a href="/book?intent=Decline&bid={{booking.id}}">
+                                    <button class="btn btn-outline-danger">
+                                        <i class="bi bi-x"></i> Decline
+                                    </button>
+                                </a>
+                            </div>
+                            <p class="text-center">Please choose an option to accept or decline the booking request.</p>
+                        
+                        {% elif booking.status == "Open" %}
+                            <a href="/book?intent=Done&bid={{booking.id}}">
+                                <button class="btn btn-outline-secondary"> Done</button>
+                            </a>
+                        
+                        {% elif booking.status == "Done" %}
+                            <span class="fw-bold text-center display-6">Waiting For Customer's Response</span>
+                        
+                        {% elif booking.status == "Closed" %}
+                            <div class="d-flex flex-column align-items-start border rounded p-3 mb-3 shadow-sm">
+                                <div class="mb-2">
+                                    <span class="text-warning">
+                                        {% for i in range(booking.rating) %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        {% endfor %}
+                                        {% for i in range(5 - booking.rating) %}
+                                            <i class="bi bi-star"></i>
+                                        {% endfor %}
+                                    </span>
+                                    <small class="text-muted">{{ booking.remark }}</small>
+                                </div>
+                                <p class="mb-0" style="font-size: 0.9rem;">{{ booking.ratingmessage }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+    </main>
+{% endblock %}        

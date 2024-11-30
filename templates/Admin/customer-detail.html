@@ -1,0 +1,59 @@
+{% extends "/Admin/base.html" %}
+{% block content %}
+    <main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+        <div class="pt-4">
+            <div class="container mt-1">
+                <button class="btn btn-outline-white btn-lg d-flex align-items-center gap-2 shadow-none" onclick="history.back()">
+                    <span>&larr;</span> Back
+                </button>
+            </div>
+            
+            <div class="card shadow-lg border-0 p-4 mt-4 mb-4">
+                <div class="row">
+                    <div class="col-md-8 d-flex align-items-center mb-3">
+                        <div class="rounded-circle border border-secondary mt-3 d-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                            <i class="bi bi-person" style="font-size: 2rem;"></i>
+                        </div>
+                        
+                        <div class="ms-3" style="height:75px">
+                            <h2 class="mb-0 display-5">{{customer.name}}</h2>
+                            <div class="mt-2">
+                                <small class="fw-bold">Status: <span class="text-success">{{customer.status}}</span></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center pb-3">
+                        {% if customer.status=="Active" %}
+                        <a href="/dashboard/customer-detail/{{customer.id}}?intent=Block"><button class="btn btn-outline-danger"><i class="bi bi-ban"></i> Block</button></a>
+                        
+                        {% elif customer.status=="Blocked" %}
+                        <a href="/dashboard/customer-detail/{{customer.id}}?intent=Unblock"><button class="btn btn-outline-success me-3"><i class="bi bi-check-circle-fill"></i> Unblock</button></a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row px-3">
+                    <div class="col-md-6 p-2 card mt-5 border me-auto shadow-lg">
+                        <div class="d-flex mb-3">
+                            <i class="bi bi-envelope text-secondary me-3"></i>
+                            <div class="text-wrap text-dark">
+                                {{customer.email}}
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <i class="bi bi-geo-alt text-secondary me-3"></i>
+                            <div class="text-wrap text-dark">
+                                {{customer.address}}
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <i class="bi bi-telephone-fill text-secondary me-3"></i>
+                            <div class="text-wrap text-dark">
+                                {{customer.phone}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}      

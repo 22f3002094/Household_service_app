@@ -1,0 +1,57 @@
+{% extends "/ServiceProfessional/base.html" %}
+{% block content %}
+<main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+    {% if cu.status=="Active" %}
+    <div class="pt-2">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col text-end me-3">
+                    <h5><b>Service Category</b> : <span class="text-warning">{{ cu.category.name }}</span></h5>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <form class="px-4" action="/dashboard/statistics" method="POST">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label"><h5>See Service Plan wise Distribution</h5> </label>
+                            <select class="form-select" id="rating" name="planid" required>
+                                <option value="" disabled selected>Select a Serviceplan</option>
+                                {% for plan in cu.all_plans %}
+                                <option value="{{plan.id}}">{{plan.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-warning">Search</button>
+                    </form>
+                </div>
+
+            </div>
+            <div class="w-60 mt-3 ms-3 pe-3 me-5">
+                <div class="card border-0 shadow-lg d-flex justify-content-center align-items-center">
+                    {% if path!="Not available" %}
+                    <img src="{{path}}" style="width: 400px;height: 450px;" class="p-4">
+                    {% else %}
+                    <div class="mt-4">
+                        <p>No Data to Show</p>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif cu.status=="Requested" %}
+    <div class="card bg-success mt-5">
+        <div class="card-body">
+            <p class="text-white">Thank You for Register!, your application is in review. Kindly wait for admins response.</p>
+        </div>
+    </div>
+    {% elif cu.status=="Blocked" %}
+    <div class="card">
+        <div class="card-body">
+            <p>Your accoud is been blocked by admin</p>
+        </div>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

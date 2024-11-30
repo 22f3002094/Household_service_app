@@ -1,0 +1,64 @@
+{% extends "/Admin/base.html" %}
+{% block content %}
+    <main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+        <div class="row pt-1">
+            <div class="col-md-6 card ms-auto border-0 shadow-lg me-auto">
+                <form action="/dashboard/search" class="p-4" method="POST">
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="u" id="customer" value="customer" >
+                            <label class="form-check-label" for="customer">Customer</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="u" id="professional" value="professional">
+                            <label class="form-check-label" for="professional">Service Professional</label>
+                        </div>
+                    </div>
+                
+                    <div class="row mb-3">
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter the Name" required>
+                        </div>
+                    </div>
+                
+                    <button type="submit" class="btn btn-outline-warning">Find</button>
+                </form>
+            </div>
+        </div>
+        {% if method=="post" %}
+        <div class="card mt-4">
+            {% if user %}
+            <table class="table py-4">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>City</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Manage</th>
+                          
+                    </tr>
+                </thead>  
+                <tbody>
+                    <tr>
+                        <td>{{user.name}}</td>
+                        <td>{{user.city}}</td>
+                        <td>{{user.phone}}</td>
+                        <td>{{user.email}}</td>
+                        <td>
+                            {% if u=="customer" %}
+                            <a href="/dashboard/customer-detail/{{user.id}}"><button class="btn btn-outline-warning">View Profile</button></a>
+                            {% elif u =="professional" %}
+                            <a href="/dashboard/professional-detail/{{user.id}}"><button class="btn btn-outline-warning">View Profile</button></a>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        {% endif %}
+    </main>
+{% endblock %}
+

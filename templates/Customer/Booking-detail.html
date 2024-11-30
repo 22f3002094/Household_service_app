@@ -1,0 +1,150 @@
+{% extends "/Customer/base.html" %}
+{% block content %}
+    <main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+        {% if cu.status=="Active" %}
+        <div class="pt-4">
+            <div class="container">
+                <button class="btn btn-outline-white btn-lg d-flex align-items-center gap-2 shadow-none" onclick="history.back()">
+                    <span>&larr;</span> Back
+                </button>
+            </div>
+            <div class="card shadow-lg border-0 p-4 mt-2 mb-4">
+                <div class="row">
+                    <div class="col-md-8 d-flex align-items-center mb-3">
+                        <!-- Image Container -->
+                        <div class="rounded-circle border border-0 bg-light d-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <img src="{{booking.service_plan.planimg}}" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        
+                        
+                        <div class="ms-3" style="height: 150px;">
+                            <h2 class="mb-0 display-5">{{booking.service_plan.name}}</h2>
+                            
+                            
+                            <div class="mt-2">
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    Status: 
+                                    <span class="{% if booking.status == 'Active' %}text-success{% elif booking.status == 'Cancelled' %}text-danger{% elif booking.status in ['Requested', 'Done'] %}text-warning{% elif booking.status == 'Closed' %}text-danger{% else %}text-muted{% endif %}">
+                                        {{booking.status}}
+                                    </span>
+                                </span>
+                                <span class="fs-5 border rounded px-2 ms-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-person-gear"></i> 
+                                    {{booking.professional.name}}
+                                </span>
+                            </div>
+                            
+                            
+                            <div class="mt-2">
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-telephone"></i>
+                                    {{booking.professional.phone}}
+                                </span>
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-currency-rupee text-warning"></i>
+                                    {{booking.service_plan.price}}
+                                </span>
+                            </div>
+                    
+                            
+                            <div class="mt-2">
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-calendar"></i>
+                                    {{booking.date}}
+                                </span>
+                                <span class="fs-5 ms-2 border rounded px-2 bg-light text-nowrap text-secondary small">
+                                    <i class="bi bi-clock"></i>
+                                    {{booking.time}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col d-flex flex-column align-items-center pb-3">
+                        {% if booking.status == "Requested" %}
+                            <div class="d-flex flex-column align-items-center mb-2">
+                                <button class="btn btn-outline-danger me-3" data-bs-toggle="modal" data-bs-target="#close-modal">
+                                    <i class="bi bi-trash"></i><span class="me-1"> Cancel</span>
+                                </button>
+                                <p class="text-center mt-2">Waiting for Service Professional to Accept</p>
+                            </div>
+                            
+                            
+                            <div class="modal fade" id="close-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to Cancel the Request?</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <a href="/book?intent=Cancel&bid={{booking.id}}">
+                                                <button class="btn btn-outline-warning">Yes</button>
+                                            </a>
+                                            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        {% elif booking.status == "Open" %}
+                            <p class="text-center">Waiting For Professional to finish the service</p>
+                        
+                        {% elif booking.status == "Done" %}
+                            <div class="d-flex flex-column align-items-center mb-2">
+                                <button class="btn btn-outline-dark me-3" data-bs-toggle="modal" data-bs-target="#close-modal">
+                                    <i class="bi bi-trash"></i><span class="me-1"> Close</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal -->
+                            <div class="modal fade" id="close-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Close Booking</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form class="px-4" action="/book?bid={{booking.id}}&intent=close" method="POST">
+                                                <div class="mb-3">
+                                                    <label for="rating" class="form-label">Give Rating</label>
+                                                    <select class="form-select" id="rating" name="rating" required>
+                                                        <option value="" disabled selected>Select a rating</option>
+                                                        <option value="1">1</option>
+                                                        <option value="2">2</option>
+                                                        <option value="3">3</option>
+                                                        <option value="4">4</option>
+                                                        <option value="5">5</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="rmessage" class="form-label">Message</label>
+                                                    <input type="text" class="form-control" id="rmessage" name="rmessage" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="pay" class="form-label">Payment</label>
+                                                    <input disabled type="text" class="form-control" id="pay" name="payment" value="{{booking.service_plan.price}}" placeholder="{{booking.service_plan.price}}">
+                                                </div>
+                                                <button type="submit" class="btn btn-warning">Pay & Close</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+        {% elif cu.status=="Blocked" %}
+        <div class="card">
+            <div class="card-body">
+                <p>Your accoud has been blocked by admin</p>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+{% endblock %}        

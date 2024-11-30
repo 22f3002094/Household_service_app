@@ -1,0 +1,358 @@
+{% extends "/ServiceProfessional/base.html" %}
+{% block content %}
+<main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+    {% if cu.status=="Active" %}
+    <div class="pt-2">
+        <div class="row g-4">
+            <div class="col text-end me-3">
+                <h5><b>Service Category</b> : <span class="text-warning">{{cu.category.name}}</span></h5>
+            </div>
+        </div>
+        <div class="container my-2">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="fw-semibold text-primary">Booking</span>
+                                <i class="bi bi bi-cart fs-4 text-muted"></i>
+                            </div>
+                            <h4 class="mt-2">{{cu.assigned_booking|length}}</h4>
+                            <button class="btn btn-outline-warning text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#bookings" aria-expanded="false" >View</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="fw-semibold text-info">ServicePlan</span>
+                                <i class="bi bi-clipboard-check fs-4"></i>
+                            </div>
+                            <h4 class="mt-2">{{cu.all_plans|length}}</h4>
+                            <a href="/dashboard/serviceplans"><button class="btn btn-outline-warning text-dark"  type="button" >View</button></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="fw-semibold text-warning">Reviews</span>
+                                <i class="bi bi-star fs-4 text-muted"></i>
+                            </div>
+                            <h4 class="mt-2"></h4>
+                            <button class="btn btn-outline-warning text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#review" aria-expanded="false">
+                                View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="collapse mb-3" id="bookings">
+            <div class="card shadow-lg" >
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-4 me-auto">
+                            <h2>Bookings</h2>
+                        </div>
+                        <div class="col ">
+                            <ul class="nav nav-pills nav-fill gap-2 p-1 small bg-warning rounded-5" id="pillNav1" role="tablist" style="--bs-nav-link-color: var(--bs-dark); --bs-nav-pills-link-active-color: var(--bs-dark); --bs-nav-pills-link-active-bg: var(--bs-white); width: 50%;">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active rounded-5" id="pills-Active-bookings-tab" data-bs-toggle="pill" data-bs-target="#pills-open-bookings" type="button" role="tab" aria-controls="pills-active" aria-selected="true">Open</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-5" id="pills-Requested-bookings-tab" data-bs-toggle="pill" data-bs-target="#pills-requested-bookings" type="button" role="tab" aria-controls="pills-requested-bookings" aria-selected="false">Requested</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-5" id="pills-closed-bookings-tab" data-bs-toggle="pill" data-bs-target="#pills-closed-bookings" type="button" role="tab" aria-controls="pills-closed-bookings" aria-selected="false">Closed</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-open-bookings" role="tabpanel" aria-labelledby="pills-open-bookings-tab" tabindex="0">
+                            <div class="card shadow-lg mt-3 border-0">
+                            {% if paginated_open_bookings %}
+                            <ul class="nav nav-tabs px-2" id="bookingsTabs" role="tablist">
+                                {% for page_num in range(1, paginated_open_bookings|length + 1) %}
+                                <li class="nav-item" role="presentation">
+                                    <button 
+                                        class="nav-link {% if page_num == 1 %}active{% endif %}" 
+                                        id="tab-{{ page_num }}" 
+                                        data-bs-toggle="tab" 
+                                        data-bs-target="#page-{{ page_num }}" 
+                                        type="button" 
+                                        role="tab" 
+                                        aria-controls="page-{{ page_num }}" 
+                                        aria-selected="{{ 'true' if page_num == 1 else 'false' }}">
+                                        Page {{ page_num }}
+                                    </button>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="tab-content mt-3 px-2" id="bookingstabcontent">
+                                {% for page_num in range(1, paginated_open_bookings|length + 1) %}
+                                <div 
+                                    class="tab-pane fade {% if page_num == 1 %}show active{% endif %}" 
+                                    id="page-{{ page_num }}" 
+                                    role="tabpanel" 
+                                    aria-labelledby="tab-{{ page_num }}">
+                                    <table class="table shadow-lg">
+                                        <thead>
+                                            <tr >
+                                                <th>Plan Name</th>
+                                                <th>Customer Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Status</th>
+                                                <th>Manage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% set page = paginated_open_bookings[page_num - 1] %}
+                                            {% for booking in page %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 40px; height: 40px;">
+                                                                    <img src="{{booking.service_plan.planimg}}" class="img-fluid" style="width: 30px; height: 30px;">
+                                                                </div>
+                                                                <p class="ms-2 mb-0">{{ booking.service_plan.name }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{booking.customer.name }}</td>
+                                                    <td>{{booking.customer.email }}</td>
+                                                    <td>{{booking.customer.phone}}</td>
+                                                    <td>{{booking.status}}</td>
+                                                    <td>
+                                                        <a href="/dashboard/booking/{{booking.id}}"><button class="btn btn-outline-warning">View</button></a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="d-flex justify-content-center">
+                                <p class="py-4">You have No open Booking</p>
+                            </div>
+                            {% endif %}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-requested-bookings" role="tabpanel" aria-labelledby="pills-requested-bookings-tab" tabindex="0">
+                            <div class="card shadow-lg mt-3 border-0">
+                            {% if paginated_requested_bookings %}
+                                <ul class="nav nav-tabs px-2" id="bookingsTabs" role="tablist">
+                                    {% for page_num in range(1, paginated_requested_bookings|length + 1) %}
+                                    <li class="nav-item" role="presentation">
+                                        <button 
+                                            class="nav-link {% if page_num == 1 %}active{% endif %}" 
+                                            id="tab-{{ page_num }}" 
+                                            data-bs-toggle="tab" 
+                                            data-bs-target="#page-{{ page_num }}" 
+                                            type="button" 
+                                            role="tab" 
+                                            aria-controls="page-{{ page_num }}" 
+                                            aria-selected="{{ 'true' if page_num == 1 else 'false' }}">
+                                            Page {{ page_num }}
+                                        </button>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="tab-content mt-3 px-2" id="bookingstabcontent">
+                                    {% for page_num in range(1, paginated_requested_bookings|length + 1) %}
+                                    <div 
+                                        class="tab-pane fade {% if page_num == 1 %}show active{% endif %}" 
+                                        id="page-{{ page_num }}" 
+                                        role="tabpanel" 
+                                        aria-labelledby="tab-{{ page_num }}">
+                                        <table class="table shadow-lg">
+                                            <thead>
+                                                <tr >
+                                                    <th>Plan Name</th>
+                                                    <th>Customer Name</th>
+                                                    <th>Email</th>
+                                                    <th>Phone</th>
+                                                    <th>Status</th>
+                                                    <th>Manage</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% set page = paginated_requested_bookings[page_num - 1] %}
+                                                {% for booking in page %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 40px; height: 40px;">
+                                                                    <img src="{{booking.service_plan.planimg}}" class="img-fluid" style="width: 30px; height: 30px;">
+                                                                </div>
+                                                                <p class="ms-2 mb-0">{{ booking.service_plan.name }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{booking.customer.name }}</td>
+                                                    <td>{{booking.customer.email }}</td>
+                                                    <td>{{booking.customer.phone}}</td>
+                                                    <td>{{booking.status}}</td>
+                                                    <td>
+                                                        <a href="/dashboard/booking/{{booking.id}}"><button class="btn btn-outline-warning">View</button></a>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="d-flex justify-content-center">
+                                    <p class="py-4">You have no Requested Booking.</p>
+                                </div>
+                            {% endif %}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="pills-closed-bookings" role="tabpanel" aria-labelledby="pills-closed-bookings-tab" tabindex="0">
+                            <div class="card shadow-lg mt-3 border-0">
+                            {% if paginated_closed_bookings %}
+                            <ul class="nav nav-tabs px-2" id="bookingsTabs" role="tablist">
+                                {% for page_num in range(1, paginated_closed_bookings|length + 1) %}
+                                <li class="nav-item" role="presentation">
+                                    <button 
+                                        class="nav-link {% if page_num == 1 %}active{% endif %}" 
+                                        id="tab-{{ page_num }}" 
+                                        data-bs-toggle="tab" 
+                                        data-bs-target="#page-{{ page_num }}" 
+                                        type="button" 
+                                        role="tab" 
+                                        aria-controls="page-{{ page_num }}" 
+                                        aria-selected="{{ 'true' if page_num == 1 else 'false' }}">
+                                        Page {{ page_num }}
+                                    </button>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <!-- Tab Content -->
+                            <div class="tab-content mt-3 px-2" id="bookingstabcontent">
+                                {% for page_num in range(1, paginated_closed_bookings|length + 1) %}
+                                <div 
+                                    class="tab-pane fade {% if page_num == 1 %}show active{% endif %}" 
+                                    id="page-{{ page_num }}" 
+                                    role="tabpanel" 
+                                    aria-labelledby="tab-{{ page_num }}">
+                                    <table class="table shadow-lg">
+                                        <thead>
+                                            <tr >
+                                                <th>Plan Name</th>
+                                                <th>Customer Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Status</th>
+                                                <th>Manage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% set page = paginated_closed_bookings[page_num - 1] %}
+                                            {% for booking in page %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 40px; height: 40px;">
+                                                                    <img src="{{booking.service_plan.planimg}}" class="img-fluid" style="width: 30px; height: 30px;">
+                                                                </div>
+                                                                <p class="ms-2 mb-0">{{ booking.service_plan.name }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{booking.customer.name }}</td>
+                                                    <td>{{booking.customer.email }}</td>
+                                                    <td>{{booking.customer.phone}}</td>
+                                                    <td>{{booking.status}}</td>
+                                                    <td>
+                                                        <a href="/dashboard/booking/{{booking.id}}"><button class="btn btn-outline-warning">View</button></a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="d-flex justify-content-center">
+                                <p class="py-4">You have no closed Booking</p>
+                            </div>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="collapse mb-3" id="review">
+            <div class="container d-flex justify-content-center">
+                <div class="card shadow-lg border-0" style="width: 30rem; max-height: 24rem; overflow-y: auto;">
+                    <div class="card-body">
+                        {% if count!=0 %}
+                        {% for booking in cu.assigned_booking %}
+                            {% if booking.status=="Closed" %}
+                                <div class="d-flex flex-column border rounded p-3 mb-3 shadow-sm">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="rounded-circle bg-light d-flex justify-content-center  align-items-center" style="width: 40px; height: 40px; display: inline-block; margin-right: 10px;"><i class="bi bi-person "></i></span>
+                                        <h6 class="mb-0">{{booking.customer.name}}</h6> 
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="text-warning">
+                                            {% for i in range(booking.rating) %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            {% endfor %}
+                                            {% for i in range(5-(booking.rating)) %}
+                                            <i class="bi bi-star"></i>
+                                            {% endfor %}
+                                        </span>
+                                        <small class="text-muted">{{booking.remark}}</small>
+                                    </div>
+                                    <p class="mb-0" style="font-size: 0.9rem;">{{booking.ratingmessage}}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <div class="d-flex align-items-center">
+                            <p>No Reviews available</p>
+                        </div>
+                        {% endif %}
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif cu.status=="Requested" %}
+    <div class="card bg-warning mt-5">
+        <div class="card-body">
+            <p class="text-white">Thank You for Register!, your application is in review. Kindly wait for admins response.</p>
+        </div>
+    </div>
+    {% elif cu.status=="Blocked" %}
+    <div class="card bg-danger">
+        <div class="card-body">
+            <p>Your accoud has been blocked by admin</p>
+        </div>
+    </div>
+    {% elif cu.status=="Rejected" %}
+    <div class="card bg-danger mt-5">
+        <div class="card-body">
+            <p class="text-white">Sorry your application has been rejected by Admin.</p>
+        </div>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

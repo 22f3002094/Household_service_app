@@ -1,0 +1,40 @@
+{% extends "/Admin/base.html" %}
+{% block content %}
+<main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+    <div class="pt-2">
+        <div class="container">
+            
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <form class="px-4" action="/dashboard/statistics" method="POST">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label"><h5>See Service Category wise Distribution</h5> </label>
+                            <select class="form-select" id="rating" name="catid" required>
+                                <option value="" disabled selected>Select a Serviceplan</option>
+                                {% for ser in all_ser %}
+                                <option value="{{ser.id}}">{{ser.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-warning">Search</button>
+                    </form>
+                </div>
+
+            </div>
+            <div class="w-60 mt-3 ms-3 pe-3 me-5">
+                <div class="card border-0 shadow-lg d-flex justify-content-center align-items-center">
+                    {% if path!="Not available" %}
+                    <img src="{{path}}" style="width: 400px;height: 450px;" class="p-4">
+                    {% else %}
+                    <div class="mt-4">
+                        <p>No Data to Show</p>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</main>
+{% endblock %}

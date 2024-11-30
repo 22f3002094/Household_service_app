@@ -1,0 +1,149 @@
+{% extends "/Admin/base.html" %}
+{% block content %}
+    <main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+        <div class="pt-4">
+            <div class="container mt-1">
+                <button class="btn btn-outline-white btn-lg d-flex align-items-center gap-2 shadow-none" onclick="history.back()">
+                    <span>&larr;</span> Back
+                </button>
+            </div>
+            <div class="card card-body mb-4 shadow-lg border-0 mt-4">
+                <div class="row g-5">
+                    <div class="row g-4">
+                        <div class="col ms-4">
+                            <h2>Service Categories</h2>
+                        </div>
+                        <div class="col text-end me-5">
+                            <button  type="button" class="btn bg-warning rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#New-Service">+ Create New Service</button>
+                            <div class="modal fade" id="New-Service" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Create New Category</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/dashboard/service-categories?intent=create", enctype="multipart/form-data" method="POST">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="floatingCategory" name="categoryname" placeholder="Category Name" required>
+                                                    <label for="floatingCategory">Category Name</label>
+                                                </div>
+                                                <div class="form-floating mb-3 position-relative">
+                                                    <input type="text" class="form-control pe-5" id="floatingtags" name="categorytags" placeholder="Service Category Tags">
+                                                    <label for="floatingtags">Service Tags</label>
+                                                    <div class="position-absolute top-50 end-0 translate-middle-y me-3">
+                                                        <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="Please Give Comma Saprated tags"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="floatingPrice" name="initialprice" placeholder="Starting Price" required>
+                                                    <label for="floatingPrice">Initial Price</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="file" class="form-control" id="floatingFile" name="categoryimage" required>
+                                                    <label for="floatingFile">Choose an Image</label>
+                                                </div>
+                                                <div class="d-flex justify-content-center mt-3">
+                                                    <button type="submit" class="btn btn-warning border-0 text-dark">Create</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% for cat in categories%}
+                    <div class="col-auto text-center">
+                        
+                        <div class="card border-0 shadow-sm" style="width: 8.5rem;">
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                <img src="{{cat.img_url}}" class="img-fluid" alt="Sports" width="60" height="80" >
+                                <button type="button" class="btn bg-warning fw-bold mt-2" data-bs-toggle="modal" data-bs-target="#manage-service-{{cat.id}}">Manage </button>
+                                <div class="modal fade" id="manage-service-{{cat.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Manage Category</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="container">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                                <img src="{{cat.img_url}}" style="width: 50px; height: 50px;">
+                                                            </div>
+                                                            <div>
+                                                            <h2 class="ms-3">{{cat.name}}</h2>
+                                                            </div>
+                                                            <div class="ms-5">
+                                                                <a href="/dashboard/service-categories?intent=delete&catid={{cat.id}}"><button class="btn btn-outline-danger" >Delete Service Category</button></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mt-4 pt-1">
+                                                        <div class="col-md-6 me-auto shadow-lg border-0">
+                                                            <div class="d-flex justify-content-center align-items-center">
+                                                                {% set tags = cat.tags.split(',') %}
+                                                                <small class="fw-bold"><i class="bi bi-tags fs-4 text-muted"></i>
+                                                                    {% for i in tags %}
+                                                                    <span class="border rounded bg-light text-nowrap text-secondary small">{{i}}</span>
+                                                                    {% endfor %}
+                                                                </small>
+                                                            </div>
+                                                            <div class="d-flex justify-content-start align-items-center">
+                                                                <small class="fw-bold d-flex align-items-center">
+                                                                    <i class="bi bi-currency-rupee fs-4 text-muted me-2"></i>
+                                                                    <span class="text-dark">{{cat.base_price}}</span>
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-5 card ms-auto border-0 shadow-lg me-auto">
+                                                            <h5 class="mt-2">
+                                                                Edit Service Category
+                                                            </h5>
+                                                            <div class="card-body">
+                                                                <form action="/dashboard/service-categories?intent=change&catid={{cat.id}}" method="POST" enctype="multipart/form-data">
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="text" class="form-control" id="floatingCategory" name="categoryname" placeholder="Category Name">
+                                                                        <label for="floatingCategory">Change Category Name</label>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3 position-relative">
+                                                                        <input type="text" class="form-control pe-5" id="floatingtags" name="categorytags" placeholder="Service Category Tags">
+                                                                        <label for="floatingtags">Change Tags</label>
+                                                                        <div class="position-absolute top-50 end-0 translate-middle-y me-3">
+                                                                            <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="right" title="Please Give Comma Saprated tags"></i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="text" class="form-control" id="floatingPrice" name="initialprice" placeholder="Starting Price">
+                                                                        <label for="floatingPrice">Change Initial price</label>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="file" class="form-control" id="floatingFile" name="categoryimage">
+                                                                        <label for="floatingFile">Change Image</label>
+                                                                    </div>
+                                                                    <div class="d-flex justify-content-center mt-3">
+                                                                        <button type="submit" class="btn btn-warning border-0 text-dark">Save Changes</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-2">{{cat.name}}</p>
+                        
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>    
+        </div>
+    </main>
+{% endblock %}

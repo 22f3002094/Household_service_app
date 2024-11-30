@@ -1,0 +1,30 @@
+{% extends "/Customer/base.html" %}
+{% block content %}
+<main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+    {% if cu.status=="Active" %}
+        <div class="pt-2">
+            <div class="container">
+                <div class="w-60 mt-3 ms-3 pe-3 me-5">
+                    <div class="card border-0 shadow-lg d-flex justify-content-center align-items-center">
+                        {% if path!="Not available" %}
+                        <img src="{{path}}" style="width: 400px;height: 450px;" class="p-4">
+                        {% else %}
+                        <div class="mt-4">
+                            <p>No Data to Show</p>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        {% elif cu.status=="Blocked" %}
+        <div class="card">
+            <div class="card-body">
+                <p>Your accoud has been blocked by admin</p>
+            </div>
+        </div>
+        {% endif %}
+</main>
+{% endblock %}

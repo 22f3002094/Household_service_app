@@ -1,0 +1,257 @@
+{% extends "/Customer/base.html" %}
+{% block content %}
+    <main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+        {% if cu.status=="Active" %}
+        <div class="pt-1">
+            <div class="container">
+                <button class="btn btn-outline-white btn-lg d-flex align-items-center gap-2 shadow-none" onclick="history.back()">
+                    <span>&larr;</span> Back
+                </button>
+            </div>
+            <div class="card shadow-lg border-0 p-4 mt-2 mb-4">
+                <div class="row">
+                    <div class="col d-flex align-items-center mb-3">
+                        <div class="rounded-circle border border-0 bg-light mt-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <img src="{{cat.img_url}}" style="width: 50px; height: 50px;">
+                        </div>
+                        <div class="ms-3" style="height:75px">
+                            <h2 class="mb-0 display-5">{{cat.name}}</h2>
+                            <div class="">
+                                
+                                {% set tags = cat.tags.split(',') %}
+                                
+
+                                <small class="fw-bold ms-5"><i class="bi bi-tags fs-4 text-muted"></i>
+                                    {% for i in tags %}
+                                    <span class="border rounded px-2 bg-light text-nowrap text-secondary small">{{i}}</span>
+                                    {% endfor %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <h2>Search</h2>
+                    <div class="row">
+                        <div class="col-md-4 me-auto">
+                            <form class="p-2" action="/dashboard/{{cat.name}}" method="POST">
+                                <div class="form-floating mb-3">
+                                  <input type="text" class="form-control" id="serviceTag" name="tag" placeholder="Enter Service" required>
+                                  <label for="serviceTag">Select Service</label>
+                                </div>
+                                
+                                <div class="col-md-2 d-flex align-items-end">
+                                  <button type="submit" class="btn btn-outline-warning">Search</button>
+                                </div>
+                            </form>
+                              
+                        </div>   
+                    </div>
+                </div> 
+            </div>
+            {% if method=="POST" %}
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-warning">
+                    Results
+                </div>
+                <div class="card-body">
+                    {% if plans %}
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for plan in plans %}
+                        <div class="col h-60">
+                            <div class="card h-60 p-3">
+                                <div class="overflow-hidden" style="height: 200px;">
+                                    <img src="{{plan.planimg}}" class="card-img-top w-100 h-100" alt="{{plan.name}} plan" style="object-fit: cover;">
+                                </div>
+                                <h4 class="mt-3">{{plan.name}}</h4>
+                                
+                                
+                                <div class="mt-2 d-flex align-items-center">
+                                    <i class="bi bi-currency-rupee fs-4 text-warning"></i>
+                                    <div class="text-wrap text-dark ms-2">
+                                        {{plan.price}}
+                                    </div>
+                                </div>
+                                <div class="mt-2 d-flex align-items-center">
+                                    <i class="bi bi-person-gear fs-4 me-2"></i>
+                                    <div class="text-wrap text-dark">
+                                        {{plan.professional.name}}
+                                    </div>
+                                </div>
+                                {% set plantags = plan.tags.split(',') %}
+                                <div class="mt-2 d-flex align-items-center">
+                                    
+                                        <i class="bi bi-tags fs-4 text-muted"></i>
+                                            
+                                        <div class="text-wrap text-dark ms-2 d-flex flex-wrap gap-1 align-items-center">
+                                            {% for i in plantags %}
+                                            <span class="border rounded px-2 py-1 bg-light text-nowrap text-secondary small">{{i}}</span>
+                                            {% endfor %}
+                                        </div>
+                                    
+                                </div>
+                                
+                                <div class="mt-2 d-flex align-items-center">
+                                    <div class="d-flex">
+                                        <i class="bi bi-file-text fs-4 me-2"></i>
+                                        <div class="text-wrap text-dark">
+                                            {{plan.description}}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="d-flex justify-content-center mt-3">
+                                    <button type="button" class="btn btn-outline-warning text-dark " data-bs-toggle="modal" data-bs-target="#viewplan-{{plan.id}}">View</button>
+                                    <div class="modal fade" id="viewplan-{{plan.id}}" tabindex="-1" aria-labelledby="viewplan" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col d-flex align-items-center mb-3">
+                                                                <div class="rounded-circle border-0 bg-light d-flex align-items-center justify-content-center mt-3" style="width: 80px; height: 80px;">
+                                                                    <img src="{{cat.img_url}}" style="width: 50px; height: 50px;">
+                                                                </div>
+                                                                <div class="ms-3" style="height:75px">
+                                                                    <h2 class="mb-0 display-5">{{plan.name}}</h2>
+                                                                    <div class="mt-3 d-flex align-items-center">
+                                                                        <div class="d-flex">
+                                                                            <i class="bi bi-tags fs-4 text-muted"></i>
+                                                                            <div class="text-wrap text-dark ms-2 d-flex flex-wrap gap-1 align-items-center">
+                                                                                {% for i in plantags %}
+                                                                                <span class="border rounded px-2 py-1 bg-light text-nowrap text-secondary small">{{i}}</span>
+                                                                                {% endfor %}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <ul class="nav nav-pills nav-fill gap-2 p-1 small bg-warning rounded-5 mt-4" id="pillNav2" role="tablist" style="--bs-nav-link-color: var(--bs-white); --bs-nav-pills-link-active-color: var(--bs-primary); --bs-nav-pills-link-active-bg: var(--bs-white);">
+                                                            <li class="nav-item" role="presentation">
+                                                                <button class="nav-link active rounded-5" id="book-tab" data-bs-toggle="tab" data-bs-target="#book-{{plan.id}}" type="button" role="tab" aria-selected="true">Book</button>
+                                                            </li>
+                                                            <li class="nav-item" role="presentation">
+                                                                <button class="nav-link rounded-5" id="review-tab" data-bs-toggle="tab" data-bs-target="#review-{{plan.id}}" type="button" role="tab" aria-selected="false">Reviews</button>
+                                                            </li>
+                                                        </ul>
+                                                        <div class="tab-content mt-4" id="myTabContent">
+                                                            <div class="tab-pane fade show active" id="book-{{plan.id}}" role="tabpanel" aria-labelledby="book-tab">
+                                                                <div class="row">
+                                                                    <div class="col-md-5 card shadow-sm border-0 h-auto">
+                                                                        <div class="mt-4 d-flex align-items-center">
+                                                                            <i class="bi bi-currency-rupee fs-4 text-warning"></i>
+                                                                            <div class="text-wrap text-dark ms-2">
+                                                                                {{plan.price}}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mt-2 d-flex align-items-center">
+                                                                            <i class="bi bi-person-gear fs-4 me-2"></i>
+                                                                            <div class="text-wrap text-dark">
+                                                                                {{plan.professional.name}}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mt-2 d-flex align-items-center">
+                                                                            <div class="d-flex">
+                                                                                <i class="bi bi-file-text fs-4 me-2"></i>
+                                                                                <div class="text-wrap text-dark">
+                                                                                    {{plan.description}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="card ms-auto me-auto col-md-4">
+                                                                        <form class="p-2" action="/book?planid={{plan.id}}&intent=book&catid={{plan.category_id}}&profid={{plan.professional_id}}" method="POST">
+                                                                            <div class="form-floating mb-3">
+                                                                              <input type="date" class="form-control" id="floatingDate" name="bdate" placeholder="Booking date" required>
+                                                                              <label for="floatingDate">Booking Date</label>
+                                                                            </div>
+                                                                            <div class="form-floating mb-3">
+                                                                              <input type="time" class="form-control" id="floatingTime" name="btime" placeholder="Booking time" required>
+                                                                              <label for="floatingTime">Booking Time</label>
+                                                                            </div>
+                                                                            <div class="form-check mb-2">
+                                                                              <input type="checkbox" class="form-check-input" id="useDefault" name="addressChoice" value="bdefault">
+                                                                              <label class="form-check-label" for="useDefault">Use Default Address</label>
+                                                                            </div>
+                                                                            <div class="form-floating mb-3">
+                                                                              <input type="text" class="form-control" id="customAddress" name="baddress" placeholder="Enter new address">
+                                                                              <label for="customAddress">New Address</label>
+                                                                            </div>
+                                                                            <div class="d-flex justify-content-center mt-3">
+                                                                              <button type="submit" class="btn btn-warning border-0 text-dark">Book</button>
+                                                                            </div>
+                                                                        </form>
+                                                                          
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="tab-pane fade" id="review-{{plan.id}}" role="tabpanel" aria-labelledby="reviews-tab">
+                                                                <div class="container d-flex justify-content-center">
+                                                                    <div class="card shadow-lg border-0" style="width: 30rem; max-height: 24rem; overflow-y: auto;">
+                                                                        <div class="card-body">
+                                                                            
+                                                                            {% for booking in plan.bookings %}
+                                                                            {% if booking.status=="Closed" %}
+                                                                            <div class="d-flex flex-column border rounded p-3 mb-3 shadow-sm">
+                                                                                <div class="d-flex align-items-center mb-2">
+                                                                                    <span class="rounded-circle bg-light d-flex justify-content-center  align-items-center" style="width: 40px; height: 40px; display: inline-block; margin-right: 10px;"><i class="bi bi-person "></i></span>
+                                                                                    <h6 class="mb-0">{{booking.customer.name}}</h6> 
+                                                                                </div>
+                                                                                <div class="mb-2">
+                                                                                    <span class="text-warning">
+                                                                                        {% for i in range(booking.rating) %}
+                                                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                                                        {% endfor %}
+                                                                                        {% for i in range(5-(booking.rating)) %}
+                                                                                        <i class="bi bi-star"></i>
+                                                                                        {% endfor %}
+                                                                                    </span>
+                                                                                    <small class="text-muted">{{booking.remark}}</small>
+                                                                                </div>
+                                                                                <p class="mb-0" style="font-size: 0.9rem;">{{booking.ratingmessage}}</p>
+                                                                            </div>
+                                                                            {% endif %}
+                                                                            {% endfor %}
+                                                                            
+                                                                         </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>
+                        No <span class="text-info">{{cat.name}}</span> Service available in your City.
+                    </p>
+                    {% endif %}
+                </div>
+            {% endif%}
+            </div>
+        </div>
+        {% elif cu.status=="Blocked" %}
+        <div class="card">
+            <div class="card-body">
+                <p>Your accoud has been blocked by admin</p>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

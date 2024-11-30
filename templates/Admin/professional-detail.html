@@ -1,0 +1,174 @@
+{% extends "/Admin/base.html" %}
+{% block content %}
+    <main class="flex-grow-1" style="margin-left: 80px; padding: 20px;">
+        <div class="pt-4">
+            <div class="container mt-1">
+                <button class="btn btn-outline-white btn-lg d-flex align-items-center gap-2 shadow-none" onclick="history.back()">
+                    <span>&larr;</span> Back
+                </button>
+            </div>
+            
+            
+            {% set plans=professional.all_plans %}
+            <div class="card shadow-lg border-0 p-4 mt-4 mb-4">
+                <div class="row">
+                    <div class="col-md-8 d-flex align-items-center mb-3">
+                        <div class="rounded-circle border border-secondary mt-3 d-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                            <i class="bi bi-person" style="font-size: 2rem;"></i>
+                        </div>
+                        
+                        <div class="ms-3" style="height:75px">
+                            <h2 class="mb-0 display-5">{{professional.name}}</h2>
+                            <div class="mt-2">
+                                <small class="fw-bold">Status: <span class="text-success">{{professional.status}}</span></small>
+                                
+                                <small class="fw-bold ms-5">Category: <span>{{professional.category.name}}</span></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center pb-3">
+                        {% if professional.status=="Requested" %}
+                        <a href="/dashboard/professional-detail/{{professional.id}}?intent=Accept"><button class="btn btn-outline-success me-3"><i class="bi bi-person-fill-add"></i> Accept</button></a>
+                        <a href="/dashboard/professional-detail/{{professional.id}}?intent=Reject"><button class="btn btn-outline-danger"><i class="bi bi-person-fill-slash"></i> Reject</button></a>
+                        {% elif professional.status=="Active" %}
+                        <a href="/dashboard/professional-detail/{{professional.id}}?intent=Block"><button class="btn btn-outline-danger"><i class="bi bi-ban"></i> Block</button></a>
+                        {% elif professional.status=="Blocked" %}
+                        <a href="/dashboard/professional-detail/{{professional.id}}?intent=UnBlock"><button class="btn btn-outline-success me-3"><i class="bi bi-check-circle-fill"></i> Unblock</button></a>
+                        {% endif %}
+
+                    </div>
+                </div>
+                
+                <ul class="nav nav-pills nav-fill gap-2 p-1 small bg-warning rounded-5 mt-4" id="pillNav1" role="tablist" style="--bs-nav-link-color: var(--bs-white); --bs-nav-pills-link-active-color: var(--bs-dark); --bs-nav-pills-link-active-bg: var(--bs-white); width: 50%;">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-5" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab" aria-selected="true">Detail</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-5" id="-tab" data-bs-toggle="tab" data-bs-target="#plan" type="button" role="tab" aria-selected="false">Created plan</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-5" id="booking-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-selected="false">Reviews</button>
+                    </li>
+                </ul>
+                    
+                <div class="tab-content mt-4" id="myTabContent">
+                    <div class="card p-4 border rounded border-0 tab-pane fade show active" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+                        <div class="row px-3">
+                            <div class="col-md-6 p-2 card border me-auto shadow-lg">
+                                <div class="d-flex mb-3">
+                                    <i class="bi bi-envelope text-secondary me-3"></i>
+                                    <div class="text-wrap text-dark">
+                                        {{professional.email}}
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <i class="bi bi-geo-alt text-secondary me-3"></i>
+                                    <div class="text-wrap text-dark">
+                                        {{professional.address}}
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <i class="bi bi-telephone-fill text-secondary me-3"></i>
+                                    <div class="text-wrap text-dark">
+                                        {{professional.phone}}
+                                    </div>
+                                </div>
+                                
+                                <button type="button" class="btn btn-warning ms-auto me-auto" data-bs-toggle="modal" data-bs-target="#profile-doc">
+                                    View Document
+                                </button>
+                                <div class="modal fade" id="profile-doc" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog"> 
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="pdfModalLabel">Resume</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <iframe src="{{professional.resume}}" width="100%" height="600px"></iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    <div class="card p-4 border rounded border-0 shadow-lg tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
+                        <div class="row row-cols-1 row-cols-md-3 g-4">
+                            {% if plans %}
+                            {% for plan in plans %}
+                            <div class="col h-100">
+                                <div class="card h-100 p-3 d-flex flex-column">
+                                    <div class="overflow-hidden" style="height: 200px;">
+                                        <img src="{{plan.planimg}}" class="card-img-top w-100 h-100" alt="{{plan.name}} plan" style="object-fit: cover;">
+                                    </div>
+                                    <h4 class="mt-3">{{plan.name}}</h4>
+                                    
+                                    
+                                    <div class="mt-2 d-flex align-items-center">
+                                        <i class="bi bi-currency-rupee fs-4 text-warning"></i>
+                                        <div class="text-wrap text-dark ms-2">
+                                            {{plan.price}}
+                                        </div>
+                                    </div>
+                                    {% set plantags = plan.tags.split(',') %}
+                                    <div class="mt-2 d-flex align-items-center">
+                                        
+                                            <i class="bi bi-tags fs-4 text-muted"></i>
+                                                
+                                            <div class="text-wrap text-dark ms-2 d-flex flex-wrap gap-1 align-items-center">
+                                                {% for i in plantags %}
+                                                <span class="border rounded px-2 py-1 bg-light text-nowrap text-secondary small">{{i}}</span>
+                                                {% endfor %}
+                                            </div>
+                                        
+                                    </div>
+                                    
+                                    <div class="mt-2 d-flex align-items-center">
+                                        <div class="d-flex">
+                                            <i class="bi bi-file-text fs-4 me-2"></i>
+                                            <div class="text-wrap text-dark">
+                                                {{plan.description}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}    
+                            {% else %}
+                                <p>{{professional.name}} Has no Service Plans. </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card col-md-7 ms-auto me-auto p-4 border rounded border-0 shadow-lg tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                        
+                        {% for booking in professional.assigned_booking %}
+                            {% if booking.status=="Closed" %}
+                                <div class="d-flex flex-column border rounded p-3 mb-3 shadow-sm">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="rounded-circle bg-light d-flex justify-content-center  align-items-center" style="width: 40px; height: 40px; display: inline-block; margin-right: 10px;"><i class="bi bi-person "></i></span>
+                                        <h6 class="mb-0">{{booking.customer.name}}</h6> 
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="text-warning">
+                                            {% for i in range(booking.rating) %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            {% endfor %}
+                                            {% for i in range(5-(booking.rating)) %}
+                                            <i class="bi bi-star"></i>
+                                            {% endfor %}
+                                        </span>
+                                        <small class="text-muted">{{booking.remark}}</small>
+                                    </div>
+                                    <p class="mb-0" style="font-size: 0.9rem;">{{booking.ratingmessage}}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+{% endblock %}      
